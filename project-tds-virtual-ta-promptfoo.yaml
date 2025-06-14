@@ -4,7 +4,7 @@ providers:
   - id: https
     config:
       url: https://project-26-five.vercel.app/api
- # Replace this with your API endpoint
+
       method: POST
       headers:
         Content-Type: application/json
@@ -17,6 +17,26 @@ providers:
 
 # Ensure JSON schema
 defaultTest:
+  options:
+    provider:
+      id: https
+      config:
+        url: https://aiproxy.sanand.workers.dev/openai/v1/chat/completions
+        method: POST
+        headers:
+          Content-Type: application/json
+          Authorization: Bearer sk-eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IjIyZjMwMDIyNjhAZHMuc3R1ZHkuaWl0bS5hYy5pbiJ9.g7xTVpU6JtZLqDuMRhtVBWNSzQCsKerPCDuvZqBoyEg      #Replace with your token
+        body: |
+          {
+            "model": "gpt-4o-mini",
+            "messages": [
+              {"role": "system", "content": "You are an evaluator that checks if an output meets specific criteria. Analyze the output based on the given rubric and respond with a JSON object containing {\"reason\": \"your analysis\", \"score\": number between 0.0 and 1.0, \"pass\": true/false}."},
+              {"role": "user", "content": "Output to evaluate: {{ output }}\n\nRubric: {{ rubric }}"}
+            ],
+            "temperature": 0
+          }
+        transformResponse: json
+
   assert:
     - type: is-json
       value:
@@ -78,4 +98,4 @@ tests:
 writeLatestResults: true
 
 commandLineOptions:
-  cache: true
+  cache: false
